@@ -34,29 +34,29 @@ parser.add_argument('-ci', '--contigs_input', help='Trinty contigs in fasta form
 args = parser.parse_args()
 input_blast_res = args.blast_input
 input_seqs = args.contigs_input
-output_fp = "ITS_contigs.fas"
+output_fp = "contigs_w_hits.fas"
 #input_blast_res = "bird1_fragment.txt"
 #input_seqs = "Bird.01.Trinity.Trinity.fasta"
 
 
 
-### OBTAIN THE ID OF CONTIGS MATCHING WITH ITS #### 
+### OBTAIN THE ID OF CONTIGS MATCHING WITH a gene in database #### 
 
-# Function that returns whether a given query (contig) had an ITS match or not
+# Function that returns whether a given query (contig) had a match to a seq in the databse or not
 pattern_match = re.compile("Sequences producing significant alignments")
 pattern_no_match = re.compile("No hits found")
 def get_matches (n, all_the_lines):
     # n is the line to start search
     for i in all_the_lines[n:]:
         if pattern_match.search(i) != None:
-            return "ITS"
+            return "match"
         if pattern_no_match.search(i) != None:
             return "Something else"
 
-# species name:
+# contig name:
 pattern_name = re.compile("Query=")
 
-# loop through queries and find the ones that match with fungal ITS
+# loop through queries and find the ones that match with a gene in the database
 wanted_contig_ids = []
 with open(input_blast_res) as file:
   all_lines = file.readlines()
@@ -66,10 +66,10 @@ with open(input_blast_res) as file:
       count_lines +=1
       
       query_line = pattern_name.search(line)
-      if query_line != None: # Found a name, now check if it matches ITS:
+      if query_line != None: # Found a name, now check if it matches a gene in the database
           check = get_matches (count_lines,all_lines)
           
-          if check == "ITS":
+          if check == "match":
               splitted_line = line.split()
               wanted_contig_ids.append(splitted_line[1])
               
