@@ -22,7 +22,7 @@ if len(sys.argv) == 1:
     print ()
     print ("Script to extract sequences from a Trinity contig file that has a blast hit")
     print ()
-    print ("USAGE: extract_target_seqs.py -bi <blast_input_file.txt> -ci <contigs_input.fas>")
+    print ("USAGE: extract_target_seqs.py -bi <blast_input_file.txt> -ci <contigs_input.fas> -o <output>")
 
     sys.exit()
 
@@ -30,33 +30,34 @@ if len(sys.argv) == 1:
 parser = ArgumentParser()
 parser.add_argument('-bi', '--blast_input', help='The path to the blast result', required=True)
 parser.add_argument('-ci', '--contigs_input', help='Trinty contigs in fasta format', required=True)
+parser.add_argument('-o', '--output', help='output file', required=True)
 
 args = parser.parse_args()
 input_blast_res = args.blast_input
 input_seqs = args.contigs_input
-output_fp = "contigs_w_hits.fas"
+output_fp = args.output
 #input_blast_res = "bird1_fragment.txt"
 #input_seqs = "Bird.01.Trinity.Trinity.fasta"
 
 
 
-### OBTAIN THE ID OF CONTIGS MATCHING WITH a gene in database #### 
+### OBTAIN THE ID OF CONTIGS MATCHING WITH ITS #### 
 
-# Function that returns whether a given query (contig) had a match to a seq in the databse or not
+# Function that returns whether a given query (contig) had an ITS match or not
 pattern_match = re.compile("Sequences producing significant alignments")
 pattern_no_match = re.compile("No hits found")
 def get_matches (n, all_the_lines):
     # n is the line to start search
     for i in all_the_lines[n:]:
         if pattern_match.search(i) != None:
-            return "match"
+            return "ITS"
         if pattern_no_match.search(i) != None:
             return "Something else"
 
-# contig name:
+# species name:
 pattern_name = re.compile("Query=")
 
-# loop through queries and find the ones that match with a gene in the database
+# loop through queries and find the ones that match with fungal ITS
 wanted_contig_ids = []
 with open(input_blast_res) as file:
   all_lines = file.readlines()
@@ -66,10 +67,10 @@ with open(input_blast_res) as file:
       count_lines +=1
       
       query_line = pattern_name.search(line)
-      if query_line != None: # Found a name, now check if it matches a gene in the database
+      if query_line != None: # Found a name, now check if it matches ITS:
           check = get_matches (count_lines,all_lines)
           
-          if check == "match":
+          if check == "ITS":
               splitted_line = line.split()
               wanted_contig_ids.append(splitted_line[1])
               
