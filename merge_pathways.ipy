@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Script to merge the results of humann2 (gene and patwya abundances) from several samples into one csv table.
+
+USAGE: ipython -- merge_pathways.ipy -i pathways
+
+@ V.R.Marcelino
+Created on Mon Oct 30 09:37:38 2017
+"""
+
+import csv
+import pandas as pd
+from argparse import ArgumentParser
+
+
+parser = ArgumentParser()
+parser.add_argument('-i', '--in_folder', help='The path to the folder containing all tsv files with genes and pathway abundances', required=True)
+args = parser.parse_args()
+input_folder = args.in_folder
+
+
+# list files
+#input_folder = "pathways"
+gene_families_fp = !ls {input_folder}/*_genefamilies.tsv
+pathways_fp = !ls {input_folder}/*_pathabundance.tsv
+
+
+# create new dataframes:
+all_genes = pd.DataFrame()
+all_pathways = pd.DataFrame()
+
+
+# Merge gene families:
+for f in gene_families_fp:
+    df = pd.read_csv(f, sep='\t', index_col=0)
+    all_genes = pd.concat([all_genes, df], axis=1)
+
+# Merge pathways:
+for f in pathways_fp:
+    df = pd.read_csv(f, sep='\t', index_col=0)
+    all_pathways = pd.concat([all_pathways, df], axis=1)
+
+ 
+    
+# Save
+pd.DataFrame.to_csv(all_genes, "merged_gene_families.csv")
+pd.DataFrame.to_csv(all_pathways, "merged_pathway_abundances.csv")
+
+print ("Done")

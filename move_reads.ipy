@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Move wanted samples to a new folder to get with mget via smbclient
+@ V.R.Marcelino
+Created on Thu Oct 26 14:35:53 2017
+Uage: ipython -- move_reads.py ...
+"""
+
+from argparse import ArgumentParser
+
+#parser = ArgumentParser()
+#parser.add_argument('-r', '--reads_folder', help='The path to the folder containing all fastq reads', required=True)
+#parser.add_argument('-i', '--wanted_samples', help='the path to the list of samples you want in the new folder', required=True)
+
+
+#args = parser.parse_args()
+#input_folder = args.reads_folder
+#wanted_samples_file = args.wanted_samples
+
+input_folder = "files_in_transit"
+wanted_samples_file = "mucosa_samples.txt"
+
+files_to_sort = !ls {input_folder}
+
+
+with open(wanted_samples_file) as samples:
+    wanted_fq_files = samples.read().splitlines()
+
+!mkdir wanted_samples
+
+
+for f in files_to_sort:
+    sample = f.split("_")[0]
+    sample_fp = str(input_folder + "/" + f)
+    
+    if sample in wanted_fq_files:
+        print ("moving %s" %(f))
+        !mv {sample_fp} wanted_samples/
+        
+        
+        
+
