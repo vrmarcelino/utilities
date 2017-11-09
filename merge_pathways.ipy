@@ -1,7 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env ipython
 # -*- coding: utf-8 -*-
 """
 Script to merge the results of humann2 (gene and patwya abundances) from several samples into one csv table.
+Note -  humann2_join_tables does the same job!
 
 USAGE: ipython -- merge_pathways.ipy -i pathways
 
