@@ -5,6 +5,10 @@ Script to count reads in a SAM file.
 
 * Exclude PE reads that match to different species
 
+* Exclude fungal species with less than 5 reads (4 or less)
+
+* Only counts a fungi present in a sample if it is present with 5 reads or more (removes lab contamination)
+
 * PE are considered 1 hit
 
 * WGD not taken into consideration because I didn't find evidence for a RPB1 paralog
@@ -69,7 +73,18 @@ for sam in sam_files:
         species.loc[ind,sample_name] = n_raw
 
 
+# Exclude fungi species with less than 5 reads:
+species_wo_rare_counts=species.loc[species.sum(axis=1) >= 5]
 
-pd.DataFrame.to_csv(species, "reads_count_raw.csv")
+# Exclude count from a fungal species with less than 5 reads in the sample:
+# Double check the csv file to see if it is safe to ignore the pandas warning.
+mask = species_wo_rare_counts < 5
+species_wo_rare_counts.iloc[mask] = 0
+
+
+# Exclude fungi with zero reads:
+species_wo_rare_counts = species_wo_rare_counts.loc[(species_wo_rare_counts!=0).any(axis=1)]
+
+pd.DataFrame.to_csv(species_wo_rare_counts, "reads_count_raw.csv")
 
  
