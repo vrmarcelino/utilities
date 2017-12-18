@@ -1,0 +1,69 @@
+#!/usr/bin/env ipython
+# -*- coding: utf-8 -*-
+"""
+Script to rename fasta files that only contain an UID - put a species name.
+It does not check for repetitive species like the version 1 of this script.
+Used for the complete RefSeq fungi (not only RPB1)
+Uses a local database with unique IDs and species names
+USAGE: rename_RefSeqs_v2.py -i <ref.fna> -e vrnarcelino@gmail.com -o <ref_renamed.fna>
+@ V.R.Marcelino
+Created on Wed Nov 15 14:06:43 2017
+"""
+
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
+from Bio import Entrez
+import re
+from argparse import ArgumentParser
+
+#parser = ArgumentParser()
+#parser.add_argument('-i', '--input_seqs', help='The path to the reference fasta file', required=True)
+#parser.add_argument('-o', '--output', help='output file path', required=True)
+
+#args = parser.parse_args()
+#input_seqs = args.input_seqs
+#output_fp = args.output
+
+input_seqs = "all_fung_refseqs.fna"
+name_map = "all_access_species_sorted.txt"
+output_fp = "all_fung_refseqs_renamed.fas"
+
+
+# Function that returns a species name from a accession ID:
+def taxonomer (UID, map):
+    full_line = !grep -w {str(UID)} {name_map}
+    species = re.split("\t", full_line[0])[1]
+    return species
+
+# storage for the renamed seqs
+new_fasta = []
+
+# loop through sequences and rename them
+previous_gi = ""
+previous_seq_name = ""
+for seq_record in SeqIO.parse(input_seqs, "fasta"):
+    get_gi = re.split("_|\|", seq_record.id)
+    accession = get_gi[1] + "_" + get_gi[2]
+
+    #only access list if it is a different accession ID
+    if accession != previous_gi:
+        species_name = taxonomer(accession,name_map)
+        previous_seq_name = species_name
+        previous_gi = accession
+
+    else:
+        species_name = previous_seq_name
+    
+    seq = str(seq_record.seq)
+    new_record = SeqRecord(Seq(seq), id=species_name, description=seq_record.description)
+    new_fasta.append(new_record)
+    print (species_name)
+    
+# Save renamed seqs
+count = SeqIO.write(new_fasta,output_fp, "fasta")
+
+print ("")
+print ("Done. Saved %i sequences in the output file." % (count))
+print ("")
+

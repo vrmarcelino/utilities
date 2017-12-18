@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script to count and normalize reads in a SAM file.
+Script to count reads in a SAM file.
 
 * Exclude PE reads that match to different species
 
-* Normalizses as fragments (i.e. PE are considered 1 hit) per million reads
-
-* Counts are a generic analog to the CPM in Humann2, or TPM (Transcipts per Million), except that gene length is not taken into consideration.
-
-* Gene length are not taken into consideration because we are only using one gene
+* PE are considered 1 hit
 
 * WGD not taken into consideration because I didn't find evidence for a RPB1 paralog
 
 @ V.R.Marcelino
-Created on Wed Nov 29 16:24:18 2017
+Created on Dec 18 2017
 
 """
 # import stuff
@@ -67,17 +63,13 @@ for sam in sam_files:
     # loop trhough the species and get their counts:
     for ind, row in species.iterrows():
         n_raw = (len(counts_dict.get(ind,())))
-    
-        # Calculate the number of fragments per million reads (CHECK!!)
-        n = n_raw * 1000000 / n_reads
+
 
         # append to the data_frame
-        species.loc[ind,sample_name] = n
+        species.loc[ind,sample_name] = n_raw
 
 
 
-pd.DataFrame.to_csv(species, "reads_count_norm.csv")
+pd.DataFrame.to_csv(species, "reads_count_raw.csv")
 
-
-
-    
+ 
