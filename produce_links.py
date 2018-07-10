@@ -46,8 +46,8 @@ def add_to_table (genes_lib, colour):
             antib_g2 = target_line_g2.iloc[0,0]
             pos1_g2 = target_line_g2.iloc[0,2]
             pos2_g2 = target_line_g2.iloc[0,3]
-            
-            new_line = [[antib_g1,pos1_g1,pos2_g1,antib_g2,pos1_g2,pos2_g2,colour]]
+            c="color="
+            new_line = [[antib_g1,pos1_g1,pos2_g1,antib_g2,pos1_g2,pos2_g2,c,colour]]
         
             links = links.append(new_line, ignore_index=True)
 
@@ -55,18 +55,20 @@ def add_to_table (genes_lib, colour):
 links = pd.DataFrame()
 
 # Birds - colored by WTP (red) or not (grey):
-add_to_table (genes_b1, 'dred')
-add_to_table (genes_b2, 'dred')
-add_to_table (genes_b3, 'lgrey')
-add_to_table (genes_b4, 'lgrey')
-add_to_table (genes_b5, 'dred')
-add_to_table (genes_b6, 'dred')
-add_to_table (genes_b7, 'lgrey')
-add_to_table (genes_b8, 'lgrey')
-add_to_table (genes_b9, 'lgrey')
-add_to_table (genes_b10, 'lgrey')
+add_to_table (genes_b1, 'rdylbu-11-div-1')
+add_to_table (genes_b2, 'rdylbu-11-div-2')
+add_to_table (genes_b3, 'greys-7-seq-2')
+add_to_table (genes_b4, 'greys-7-seq-3')
+add_to_table (genes_b5, 'rdylbu-11-div-3')
+add_to_table (genes_b6, 'rdylbu-11-div-4')
+add_to_table (genes_b7, 'greys-8-seq-2')
+add_to_table (genes_b8, 'greys-7-seq-4')
+add_to_table (genes_b9, 'greys-7-seq-5')
+add_to_table (genes_b10, 'greys-7-seq-6')
 
-# note that bird11 has to be added manually (only two genes)
+
+# note that bird11 has to be added manually (only two genes)!
+# Bla 11 12 Tet 4 5 color=greys-7-seq-7
 
 #Save
 links.to_csv(r'links.txt', header=None, index=None, sep=' ', mode='a')
