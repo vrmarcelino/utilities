@@ -75,7 +75,7 @@ def lineage_extractor(taxid,TaxInfo_object):
 
 
 # read rsem output
-rsem_df = pd.read_csv(rsem_res, sep='\t', index_col=0)
+rsem_df = pd.read_csv(rsem_res, sep='\t', index_col=0, names=['ti','TPM'], header=None)
 
 new_df = pd.DataFrame(columns=['TPM','Superkingdom', 'Kingdom', 'Phylum', 'Class', 'Order', 'Family','Genus', 'Species'])
 
