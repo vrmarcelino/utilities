@@ -3,6 +3,7 @@
 """
 This script saves the classified transcripts in a file "out_frags_good" and the unclassified transcripts in "out_frags_fail"
 # the files that did not classify with CCMetagen will get a "unk_taxid|unclassified" name
+Difference - with filter_frags_transcripts - it get the different reads (rather than teh basename of the contig)
 @ V.R.Marcelino
 Created on Thu Mar  7 17:12:42 2019
 """
@@ -41,7 +42,9 @@ cb = 0 #count failed reads
 with open(frags_fp) as frags:
     for line in csv.reader(frags, delimiter = '\t'):
         match = line[5]
-        transcript = line[6].split(" ")[0]
+        transcript_id = line[6].split(" ")[0]
+        transcript_read = line[6].split("/")[-1]
+        transcript = transcript_id + "/" + transcript_read
 
         if match in res_match:
             ofile_good.write(match + "\t" + transcript + "\n")
@@ -56,7 +59,7 @@ ofile_fail.close()
 
 print ("")
 print ("Saved %i sequences in the frags.pass.txt file." %(cg))
-print ("%i contigs did not meet the coverage QC threshold" %(cb))
+print ("%i reads did not meet the coverage QC threshold" %(cb))
 print ("")
 
 
